@@ -1,13 +1,16 @@
 package com.example.kimja.secondhomework;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Main3Activity extends AppCompatActivity {
     Button b1,b2;
@@ -60,17 +63,19 @@ public class Main3Activity extends AppCompatActivity {
                 txt1.setText(result+"점");
                 txt2.setText(average+"점");
                 if(average>=90){
-
+                    img1.setImageDrawable(getResources().getDrawable(R.drawable.aa));
                 }else if (average >= 80){
-                    img1.setImageDrawable(getResources().getDrawable(R.drawable.bb, getApplicationContext().getTheme()));
+                    img1.setImageDrawable(getResources().getDrawable(R.drawable.bb));
                 }else if (average >= 70 ){
-                    img1.setImageDrawable(getResources().getDrawable(R.drawable.cc, getApplicationContext().getTheme()));
+                    img1.setImageDrawable(getResources().getDrawable(R.drawable.cc));
                 }else if (average >= 60 ){
-                    img1.setImageDrawable(getResources().getDrawable(R.drawable.dd, getApplicationContext().getTheme()));
+                    img1.setImageDrawable(getResources().getDrawable(R.drawable.dd));
                 } else {
-                    img1.setImageDrawable(getResources().getDrawable(R.drawable.ff, getApplicationContext().getTheme()));
+                    img1.setImageDrawable(getResources().getDrawable(R.drawable.ff));
                 }
                 img1.setVisibility(View.VISIBLE);
+                InputMethodManager mInputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                mInputMethodManager.hideSoftInputFromWindow(editText1.getWindowToken(), 0);
             }
         });
         b2.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +87,7 @@ public class Main3Activity extends AppCompatActivity {
                 img1.setVisibility(View.GONE);
                 txt1.setText("0점");
                 txt2.setText("0점");
+                Toast.makeText(getApplicationContext(),"초기화 되었습니다.",Toast.LENGTH_SHORT).show();
             }
         });
 
