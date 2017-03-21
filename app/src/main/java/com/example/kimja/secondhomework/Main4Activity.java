@@ -1,8 +1,12 @@
 package com.example.kimja.secondhomework;
 
 import android.content.Intent;
+import android.icu.util.Calendar;
+import android.icu.util.GregorianCalendar;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import static android.R.attr.calendarTextColor;
 import static android.R.attr.value;
 
 public class Main4Activity extends AppCompatActivity {
@@ -34,6 +39,7 @@ public class Main4Activity extends AppCompatActivity {
     TextView text1,text2,text3,text4,text5;
     int value = 0;
     int page = 1;
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +50,7 @@ public class Main4Activity extends AppCompatActivity {
 
         init();
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     void init(){
         //선언
         aSwitch = (Switch)findViewById(R.id.switch1);
@@ -53,6 +60,9 @@ public class Main4Activity extends AppCompatActivity {
 
         page1 = (LinearLayout)findViewById(R.id.page1);
         datePicker =(DatePicker)findViewById(R.id.datePicker);
+        final GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        datePicker.init(gregorianCalendar.get(Calendar.YEAR),gregorianCalendar.get(Calendar.MONTH)+1
+                ,gregorianCalendar.get(Calendar.DAY_OF_MONTH),null);
 
         page2 = (LinearLayout)findViewById(R.id.page2);
         timePicker = (TimePicker)findViewById(R.id.timePicker);
@@ -84,7 +94,8 @@ public class Main4Activity extends AppCompatActivity {
                     b1.setEnabled(false);
                     b2.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v) { //다음 버튼이 눌릴때
+                            //각각의 페이지 표시
                             if(page == 1){
                                 page1.setVisibility(View.INVISIBLE);
                                 page2.setVisibility(View.VISIBLE);
@@ -95,19 +106,33 @@ public class Main4Activity extends AppCompatActivity {
                                 page3.setVisibility(View.VISIBLE);
                                 page++;
                             } else if(page == 3) {
-                                page3.setVisibility(View.INVISIBLE);
-                                page4.setVisibility(View.VISIBLE);
-                                page++;
-                                b2.setEnabled(false);
                                 //inputs
-
                                 String inputadult,inputteenager,inputkid;
                                 inputadult = adult.getText().toString();
                                 inputteenager = teenager.getText().toString();
                                 inputkid = kid.getText().toString();
 
 
-                                //표시
+                                //예외처리
+                                if (inputadult.getBytes().length <=0) inputadult = "0";
+                                if (inputteenager.getBytes().length<=0) inputteenager = "0";
+                                if (inputkid.getBytes().length <=0) inputkid = "0";
+                                if(Integer.parseInt(inputadult) == 0 && Integer.parseInt(inputkid)
+                                        == 0 && Integer.parseInt(inputteenager) == 0){
+                                    Toast.makeText(getApplication(), "0명은 예약할 수 없습니다. 다시입력해 주세요."
+                                            ,Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                //페이지 표시
+                                page3.setVisibility(View.INVISIBLE);
+                                page4.setVisibility(View.VISIBLE);
+                                page++;
+                                b2.setEnabled(false);
+
+                                //결과 값 출력
+                                text1.setText(datePicker.getYear()+"년 "+datePicker.getMonth()+"월 "
+                                        +datePicker.getDayOfMonth()+"일");
+                                text2.setText(timePicker.getHour()+"시 "+timePicker.getMinute()+"분");
                                 text3.setText(Integer.parseInt(inputadult)+"명");
                                 text4.setText(Integer.parseInt(inputteenager)+"명");
                                 text5.setText(Integer.parseInt(inputkid)+"명");
@@ -119,7 +144,7 @@ public class Main4Activity extends AppCompatActivity {
 
                     b1.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(View v) { //이전버튼이 눌릴 때
                             if(page == 2){
                                 page2.setVisibility(View.INVISIBLE);
                                 page1.setVisibility(View.VISIBLE);
@@ -142,13 +167,18 @@ public class Main4Activity extends AppCompatActivity {
 
 
                 }
-                else{
+                else{ //스위치가 헤제됬을때
+                    //모든 변수와 핸들러 초기화
+
                     mHandler.removeMessages(0);
                     value = 0;
                     page = 1;
                     page1.setVisibility(View.INVISIBLE);
-
+                    datePicker.init(gregorianCalendar.get(Calendar.YEAR),gregorianCalendar.get(Calendar.MONTH)+1
+                            ,gregorianCalendar.get(Calendar.DAY_OF_MONTH),null);
                     page2.setVisibility(View.INVISIBLE);
+                    timePicker.setCurrentHour(gregorianCalendar.get(Calendar.HOUR));
+                    timePicker.setCurrentMinute(gregorianCalendar.get(Calendar.MINUTE));
                     page3.setVisibility(View.INVISIBLE);
                     adult.setText(null);
                     teenager.setText(null);
